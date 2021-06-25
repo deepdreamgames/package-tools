@@ -1,14 +1,16 @@
 # com.deepdreamgames.package-tools
 
-Wrapper for Unity's `UnityEditor.PackageManager.Client.Pack()` which allows to list and select embedded packages to pack. 
-Wrapper for Unity's `UnityEditor.PackageManager.Client.Pack()` which allows to pack embedded packages into .tgz archives.
+Wrapper for Unity's `UnityEditor.PackageManager.Client.Pack()` which allows to pack embedded packages into `.tgz` archives.
 
 
-# Pack using GUI
+# Installation
 
-Select `Tools` > `Deep Dream Games` > `Pack Embedded Package(s)...`
+`Window` > `Package Manager` > `+` > `Add package from git URL...` paste `https://github.com/deepdreamgames/package-tools.git` and press `Add` button. 
+
+Alternatively - you can download latest [release](https://github.com/deepdreamgames/package-tools/releases/latest) and add it to Unity by using [Pachka](https://github.com/deepdreamgames/pachka) package registry server. 
 
 
-# Pack from code
+# Usage
 
-Call `DeepDreamGames.PackageTools.Pack("com.deepdreamgames.packagetools");` where `com.deepdreamgames.packagetools` is the `name` of your package as seen in `package.json`.
+* Pack using GUI: Select `Tools` > `Deep Dream Games` > `Pack Embedded Package(s)...`
+* Pack from code: Call `DeepDreamGames.PackageTools.Pack("com.deepdreamgames.packagetools");` where `com.deepdreamgames.packagetools` is the `name` of your package as seen in `package.json`.
