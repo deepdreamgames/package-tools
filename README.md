@@ -13,4 +13,4 @@ Alternatively - you can download latest [release](https://github.com/deepdreamga
 # Usage
 
 * Pack using GUI: Select `Tools` > `Deep Dream Games` > `Pack Embedded Package(s)...`
-* Pack from code: Call `DeepDreamGames.PackageTools.Pack("com.deepdreamgames.packagetools");` where `com.deepdreamgames.packagetools` is the `name` of your package as seen in `package.json`.
+* Pack from code: Call `DeepDreamGames.PackageTools.Pack("com.deepdreamgames.package-tools");` where `com.deepdreamgames.package-tools` is the `name` of your package as seen in `package.json`.
