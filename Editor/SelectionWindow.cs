@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace DeepDreamGames
 {
@@ -11,7 +12,10 @@ namespace DeepDreamGames
     {
         static class Styles
         {
-            static public GUIStyle line = "TV Line";
+            static public GUIStyle line = new GUIStyle("TV Line")
+            {
+                alignment = TextAnchor.MiddleLeft,
+            };
         }
 
         private class Option : TreeViewItem
@@ -23,12 +27,12 @@ namespace DeepDreamGames
         private class MyTreeView : TreeView
         {
             private TreeViewItem root;
-            
+            public Action<int> onDoubleClickedItem;
+
             // Ctor
             public MyTreeView(TreeViewState treeViewState, List<string> options) : base(treeViewState)
             {
                 Initialize(options);
-                Reload();
                 Repaint();
             }
             
@@ -42,7 +46,7 @@ namespace DeepDreamGames
                 for (int i = 0; i < options.Count; i++)
                 {
                     GUIContent content = new GUIContent(options[i]);
-                    float height = style.CalcHeight(content, 10000f);
+                    float height = style.CalcHeight(content, 10000f) + 6;
                     Option item = new Option()
                     {
                         id = i,
@@ -61,9 +65,30 @@ namespace DeepDreamGames
             }
 
             // 
+            protected override void RowGUI(RowGUIArgs args)
+            {
+                if (Event.current.rawType == EventType.Repaint)
+                {
+                    Option option = args.item as Option;
+                    Rect rect = args.rowRect;
+                    rect.xMin += GetContentIndent(option) + extraSpaceBeforeIconAndLabel;
+                    Styles.line.Draw(rect, option.displayName, false, false, args.selected, args.focused);
+                }
+            }
+
+            // 
             public void Deinitialize()
             {
                 root = null;
+            }
+
+            // 
+            protected override void DoubleClickedItem(int id)
+            {
+                if (onDoubleClickedItem != null)
+                {
+                    onDoubleClickedItem(id);
+                }
             }
 
             // 
@@ -104,6 +129,7 @@ namespace DeepDreamGames
                     instance.treeViewState = new TreeViewState();
                 }
                 instance.treeView = new MyTreeView(instance.treeViewState, options);
+                instance.treeView.onDoubleClickedItem = instance.OnDoubleClickedItem;
             }
             else
             {
@@ -133,8 +159,6 @@ namespace DeepDreamGames
                 {
                     result.AddRange(treeView.GetSelection());
                     result.Sort();
-                    result = null;
-                    treeView.Deinitialize();
                     Close();
                 }
             }
@@ -144,6 +168,13 @@ namespace DeepDreamGames
             }
 
             Repaint();
+        }
+
+        // 
+        void OnDisable()
+        {
+            result = null;
+            treeView.Deinitialize();
         }
         #endregion
 
@@ -159,6 +190,20 @@ namespace DeepDreamGames
                 editorWindow = CreateInstance(type) as EditorWindow;
             }
             return (T)editorWindow;
+        }
+        
+        // 
+        private void OnDoubleClickedItem(int id)
+        {
+            IList<int> selection = treeView.GetSelection();
+            if (selection.Count == 1 && selection[0] == id)
+            {
+                result.Add(id);
+                result.Sort();
+                Close();
+            }
+            // If more than 1 item is selected or selected item differs from the one which was double-clicked - 
+            // don't do anything to prevent undesired behavior
         }
         #endregion
     }
